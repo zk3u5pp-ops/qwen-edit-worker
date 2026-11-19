@@ -61,9 +61,13 @@ RUN pip3 install --no-cache-dir \
     --index-url https://download.pytorch.org/whl/cu124
 
 # torchao (FP8 weight-only quantization) and peft (LoRA loading).
-# torchao's version is resolved by pip against the installed torch 2.6.0.
+# torchao is PINNED to 0.10.0: it is the release built for torch 2.6.0.
+# Unpinned pip resolves torchao 0.18.0, which needs torch >= 2.11 and fails
+# the build-time import check (torch.utils._pytree.register_constant missing
+# in torch 2.6.0). Verified locally 2026-11-20: 0.10.0/0.12.0/0.14.1 pass
+# the health check with torch 2.6.0; 0.10.0 is the era-matched choice.
 RUN pip3 install --no-cache-dir \
-    "torchao" \
+    "torchao==0.10.0" \
     "peft>=0.14.0"
 
 # Try to install flash-attn for optimized attention (optional - falls back to SDPA)
